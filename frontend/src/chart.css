@@ -1,0 +1,135 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Roboto", sans-serif;
+    background: #f4f7fa;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  /* App Container */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: space-between;
+  }
+  
+  .align {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Header */
+  .app-header {
+    text-align: center;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #4a90e2, #1a237e);
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .app-header p {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  /* Charts Section */
+  .charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .chart-wrapper {
+    width: 100%;
+    max-width: 600px;
+    height: 450px; /* Ensure height is explicitly set */
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .chart-wrapper:hover {
+    transform: translateY(-5px);
+  }
+  
+  
+  /* Accessibility Card */
+  .accessibility-card {
+    width: 300px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .accessibility-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .circular-progress-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+  }
+  
+  .risk-message {
+    font-size: 0.9rem;
+    color: #f44336; /* Red for risk */
+    margin-top: 0.5rem;
+    font-weight: bold;
+  }
+  
+  /* Footer */
+  .app-footer {
+    text-align: center;
+    padding: 1.5rem;
+    background: #1a237e;
+    color: #fff;
+    font-size: 0.95rem;
+    margin-top: 2rem;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-footer p {
+    margin: 0;
+  }
+  
+  /* Loading Screen */
+  .loading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-top: 20%;
+  }
+  
+  
+  .accessibility-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  
