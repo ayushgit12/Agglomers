@@ -11,6 +11,21 @@ const InitialPreview = ({ scrapedData }) => {
 
   return (
     <div className="w-full " style={{ padding: "20px" }}>
+      {localStorage.getItem("preview_url") && (
+        <button>
+          <a
+          onClick={() => {
+            localStorage.removeItem("preview_url");
+          }
+          }
+            href={`/code/${localStorage.getItem("preview_url")}`}
+            target="_blank"
+            rel="noreferrer"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >move</a>
+        </button>
+      )
+        }
       <h1 className="text-5xl">Initial Website</h1>
       {iframeContent ? (
         <iframe

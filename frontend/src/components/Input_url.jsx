@@ -17,7 +17,8 @@ const InputUrl = ({ onPreview }) => {
 
       // Pass only the preview URL
       onPreview(response.data.preview_url);
-      console.log(response.data.preview_url);
+      // console.log(response.data.preview_url.split().pop());
+      localStorage.setItem("preview_url", response.data.preview_url.split('/').pop());
     } catch (error) {
       console.error("Error processing URL:", error);
       alert("Failed to process the URL. Please try again.");

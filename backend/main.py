@@ -197,12 +197,12 @@ def scrapedata(url, session_id):
     
 
 
-    soup = manage_img_alt_tags(soup)
-    soup = manage_label_tags(soup)
-    soup = change_font_size_for_each_element(soup)
-    soup = manage_contrast_between_text_and_background(soup)
-    soup = manage_background(soup)
-    soup = increase_overall_font_size_bytwice_of_initial(soup)
+    # soup = manage_img_alt_tags(soup)
+    # soup = manage_label_tags(soup)
+    # soup = change_font_size_for_each_element(soup)
+    # soup = manage_contrast_between_text_and_background(soup)
+    # soup = manage_background(soup)
+    # soup = increase_overall_font_size_bytwice_of_initial(soup)
     
     # Ensure the previews folder exists
     preview_dir = "previews"
