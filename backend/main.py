@@ -26,6 +26,13 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
+
+def return_soup(url):
+    webpage = requests.get(url, headers=HEADERS)
+    soup = BeautifulSoup(webpage.content, "html.parser")
+    return soup
+
+
 def download_resource(url, folder):
     # Get the resource name (filename) from the URL
     parsed_url = urlparse(url)
@@ -93,52 +100,59 @@ def change_font_size_for_each_element(soup):
 
 
 
-# def get_contrast_ratio(color1, color2):
-#     # Convert hex colors to RGB
-#     def hex_to_rgb(hex_color):
-#         hex_color = hex_color.lstrip("#")
-#         return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+def get_contrast_ratio(color1, color2):
+    # Convert hex colors to RGB
+    def hex_to_rgb(hex_color):
+        hex_color = hex_color.lstrip("#")
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
     
-#     def rgb_to_luminance(r, g, b):
-#         r = r / 255
-#         g = g / 255
-#         b = b / 255
-#         r = r if r <= 0.03928 else ((r + 0.055) / 1.055) ** 2.4
-#         g = g if g <= 0.03928 else ((g + 0.055) / 1.055) ** 2.4
-#         b = b if b <= 0.03928 else ((b + 0.055) / 1.055) ** 2.4
-#         return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    def rgb_to_luminance(r, g, b):
+        r = r / 255
+        g = g / 255
+        b = b / 255
+        r = r if r <= 0.03928 else ((r + 0.055) / 1.055) ** 2.4
+        g = g if g <= 0.03928 else ((g + 0.055) / 1.055) ** 2.4
+        b = b if b <= 0.03928 else ((b + 0.055) / 1.055) ** 2.4
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
     
-#     color1 = hex_to_rgb(color1)
-#     color2 = hex_to_rgb(color2)
+    color1 = hex_to_rgb(color1)
+    color2 = hex_to_rgb(color2)
     
-#     # Calculate the relative luminance of the colors
-#     luminance1 = rgb_to_luminance(*color1)
-#     luminance2 = rgb_to_luminance(*color2)
+    # Calculate the relative luminance of the colors
+    luminance1 = rgb_to_luminance(*color1)
+    luminance2 = rgb_to_luminance(*color2)
     
-#     # Calculate the contrast ratio
-#     if luminance1 > luminance2:
-#         contrast_ratio = (luminance1 + 0.05) / (luminance2 + 0.05)
-#     else:
-#         contrast_ratio = (luminance2 + 0.05) / (luminance1 + 0.05)
+    # Calculate the contrast ratio
+    if luminance1 > luminance2:
+        contrast_ratio = (luminance1 + 0.05) / (luminance2 + 0.05)
+    else:
+        contrast_ratio = (luminance2 + 0.05) / (luminance1 + 0.05)
     
-#     return contrast_ratio
+    return contrast_ratio
 
 
-# def manage_contrast_between_text_and_background(soup):
+def manage_contrast_between_text_and_background(soup):
 
 
-#     # Find all text elements
-#     text_elements = soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "a", "li", "td", "th", "caption", "label"])
-#     for elem in text_elements:
-#         # Get the computed background color of the element
-#         bg_color = elem.get("bg_color")
-#         if bg_color:
-#             # Check the contrast ratio between the text color and the background color
-#             contrast_ratio = get_contrast_ratio(elem.get("color"), bg_color)
-#             if contrast_ratio < 4.5:
-#                 # Change the text color to white if the contrast ratio is too low
-#                 elem["color"] = "#FFFFFF"
-#     print(soup)
+    # Find all text elements
+    text_elements = soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "a", "li", "td", "th", "caption", "label"])
+    for elem in text_elements:
+        # Get the computed background color of the element
+        bg_color = elem.get("bg_color")
+        if bg_color:
+            # Check the contrast ratio between the text color and the background color
+            contrast_ratio = get_contrast_ratio(elem.get("color"), bg_color)
+            if contrast_ratio < 4.5:
+                # Change the text color to white if the contrast ratio is too low
+                elem["color"] = "#FFFFFF"
+    return soup
+
+
+def manage_background(soup):
+    for tag in soup.find_all(['p', 'span', 'div']):
+        tag['style'] = f"font-size: 18px; color: black; background-color: white; filter: contrast(125%);"
+    return soup
+
 
 
 def scrapedata(url, session_id):
@@ -158,6 +172,8 @@ def scrapedata(url, session_id):
     soup = manage_img_alt_tags(soup)
     soup = manage_label_tags(soup)
     soup = change_font_size_for_each_element(soup)
+    soup = manage_contrast_between_text_and_background(soup)
+    soup = manage_background(soup)
     
     # Ensure the previews folder exists
     preview_dir = "previews"

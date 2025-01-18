@@ -48,7 +48,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import uuid
 import os
-from main import scrapedata, clear_previews  # Make sure to import the scraping function
+from main import scrapedata, clear_previews, return_soup  # Make sure to import the scraping function
 
 app = Flask(__name__)
 CORS(app)
@@ -56,6 +56,19 @@ CORS(app)
 @app.route("/")
 def read_root():
     return jsonify({"Hello": "World"})
+
+
+@app.route("/return_soup", methods=["POST"])
+def read_soup():
+    data = request.get_json()
+    url = data.get('url')
+    
+    if not url:
+        return jsonify({"error": "URL is required in the JSON body"}), 400
+    
+    soup = return_soup(url)
+    return jsonify({"soup": soup.prettify()})
+
 
 @app.route("/scrapedata", methods=["POST"])
 def read_scrape_data():

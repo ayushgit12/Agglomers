@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import InitialPreview from "./Initial_preview";
 
 const InputUrl = ({ onPreview }) => {
   const [url, setUrl] = useState("");
@@ -72,6 +73,7 @@ const InputUrl = ({ onPreview }) => {
        className="bg-red-700">
         Reset
       </button>
+      <InitialPreview scrapedData={url} />
     </div>
   );
 };
