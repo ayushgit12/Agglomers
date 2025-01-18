@@ -46,9 +46,9 @@
 #     return file_path
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from main import scrapedata
 import uuid
 import os
+from main import scrapedata  # Make sure to import the scraping function
 
 app = Flask(__name__)
 CORS(app)
@@ -74,19 +74,10 @@ def read_scrape_data():
     preview_url = f"http://127.0.0.1:8000/preview/{session_id}"
     return jsonify({"preview_url": preview_url, "session_id": session_id})
 
-# @app.route("/preview/<session_id>")
-# def serve_preview(session_id):
-#     preview_dir = "previews"
-#     file_path = os.path.join(preview_dir, f"{session_id}.html")
-
-#     if os.path.exists(file_path):
-#         return send_from_directory(preview_dir, f"{session_id}.html")
-#     else:
-#         return jsonify({"error": "Preview not found."}), 404
-
+# Serve the HTML preview
 @app.route("/preview/<session_id>")
 def serve_preview(session_id):
-    preview_dir = os.path.abspath("previews")  # Absolute path
+    preview_dir = os.path.abspath("previews")
     file_name = f"{session_id}.html"
 
     if os.path.exists(os.path.join(preview_dir, file_name)):
@@ -94,6 +85,15 @@ def serve_preview(session_id):
     else:
         return jsonify({"error": "Preview not found."}), 404
 
+# Serve static resources like CSS, JS, and images
+@app.route("/preview/<session_id>/<path:filename>")
+def serve_static(session_id, filename):
+    preview_dir = os.path.abspath("previews")
+    file_path = os.path.join(preview_dir, session_id, filename)
+    if os.path.exists(file_path):
+        return send_from_directory(os.path.join(preview_dir, session_id), filename)
+    else:
+        return jsonify({"error": "File not found."}), 404
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
