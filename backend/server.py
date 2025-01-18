@@ -48,7 +48,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import uuid
 import os
-from main import scrapedata  # Make sure to import the scraping function
+from main import scrapedata, clear_previews  # Make sure to import the scraping function
 
 app = Flask(__name__)
 CORS(app)
@@ -94,6 +94,13 @@ def serve_static(session_id, filename):
         return send_from_directory(os.path.join(preview_dir, session_id), filename)
     else:
         return jsonify({"error": "File not found."}), 404
+    
+
+@app.route("/clear_previews", methods=["POST"])
+def clear_previews_route():
+    clear_previews()
+    return jsonify({"message": "Previews cleared."})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

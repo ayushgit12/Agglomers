@@ -23,6 +23,21 @@ const InputUrl = ({ onPreview }) => {
     }
   };
 
+  const handleReset  = () => {
+    
+
+    axios.post("http://127.0.0.1:8000/clear_previews")
+    .then((response) => {
+      console.log(response.data);
+      alert("Previews cleared successfully");
+    })
+
+    .catch((error) => {
+      console.error("Error processing URL:", error);
+      alert("Failed to process the URL. Please try again.");
+    })
+  }
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>Enter Website URL</h1>
@@ -51,6 +66,11 @@ const InputUrl = ({ onPreview }) => {
         }}
       >
         {isProcessing ? "Processing..." : "Submit"}
+      </button>
+      <button
+      onClick={handleReset}
+       className="bg-red-700">
+        Reset
       </button>
     </div>
   );

@@ -86,3 +86,32 @@ def scrapedata(url, session_id):
         file.write(soup.prettify())
     
     return html_file_path
+
+def clear_previews():
+    
+    # Delete the previews folder and its contents
+    try:
+        preview_dir = "previews"
+        for root, dirs, files in os.walk(preview_dir, topdown=False):
+            for file in files:
+                os.remove(os.path.join(root, file))
+            for dir in dirs:
+                os.rmdir(os.path.join(root, dir))
+        os.rmdir(preview_dir)
+    
+    except FileNotFoundError:
+        pass
+
+    return "Previews cleared"
+
+
+def manage_img_alt_tags(soup):
+    # Find all images without alt attributes
+    images = soup.find_all("img", alt=False)
+    
+    # Add alt attribute to each image
+    for img in images:
+        img['alt'] = "No description provided"
+    
+    return soup.prettify()
+
