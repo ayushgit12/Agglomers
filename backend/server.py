@@ -158,6 +158,39 @@ def apply_change():
     updated_url = f"http://127.0.0.1:8000/preview/{session_id}"
     return jsonify({"updated_url": updated_url})
 
+@app.route("/get_html_code", methods=["POST"])
+def get_html_code():
+    data = request.get_json()
+    session_id = data.get("session_id")
+
+    if not session_id:
+        return jsonify({"error": "Session ID is required."}), 400
+
+    # File paths for original and updated HTML files
+    preview_dir = os.path.abspath("previews")
+    original_html_path = os.path.join(preview_dir, f"{session_id}.html")
+    updated_html_path = os.path.join(preview_dir, f"{session_id}.html")  # Adjust if needed to track changes separately
+
+    if not os.path.exists(original_html_path):
+        return jsonify({"error": "Original HTML file not found."}), 404
+
+    # Read both original and updated HTML content
+    with open(original_html_path, "r", encoding="utf-8") as file:
+        original_html = file.read()
+
+    # Assuming that updates are applied to the same file for now
+    with open(updated_html_path, "r", encoding="utf-8") as file:
+        updated_html = file.read()
+        print (original_html)
+        print(updated_html)
+
+    return jsonify({
+        "original_html": original_html,
+        "updated_html": updated_html
+        
+    })
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

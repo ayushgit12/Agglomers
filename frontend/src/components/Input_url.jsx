@@ -9,6 +9,7 @@ const InputUrl = ({ onPreview }) => {
   const handleSubmit = async () => {
     setIsProcessing(true);
     try {
+      localStorage.setItem("url", url);
       const response = await axios.post("http://127.0.0.1:8000/scrapedata", {
         url,
       });
@@ -24,20 +25,19 @@ const InputUrl = ({ onPreview }) => {
     }
   };
 
-  const handleReset  = () => {
-    
+  const handleReset = () => {
+    axios
+      .post("http://127.0.0.1:8000/clear_previews")
+      .then((response) => {
+        console.log(response.data);
+        alert("Previews cleared successfully");
+      })
 
-    axios.post("http://127.0.0.1:8000/clear_previews")
-    .then((response) => {
-      console.log(response.data);
-      alert("Previews cleared successfully");
-    })
-
-    .catch((error) => {
-      console.error("Error processing URL:", error);
-      alert("Failed to process the URL. Please try again.");
-    })
-  }
+      .catch((error) => {
+        console.error("Error processing URL:", error);
+        alert("Failed to process the URL. Please try again.");
+      });
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -68,9 +68,7 @@ const InputUrl = ({ onPreview }) => {
       >
         {isProcessing ? "Processing..." : "Submit"}
       </button>
-      <button
-      onClick={handleReset}
-       className="bg-red-700">
+      <button onClick={handleReset} className="bg-red-700">
         Reset
       </button>
       <InitialPreview scrapedData={url} />
