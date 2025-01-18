@@ -5,7 +5,21 @@ from html.parser import HTMLParser
 from datetime import datetime
 import asyncio
 import certifi
+from diff_match_patch import diff_match_patch
 
+
+def difference_report(original_html, accessible_html):
+    dmp = diff_match_patch()
+    diffs = dmp.diff_main(original_html, accessible_html)
+    dmp.diff_cleanupSemantic(diffs)
+    return dmp.diff_prettyHtml(diffs)
+
+
+def generate_diff(original_html, accessible_html):
+    dmp = diff_match_patch()
+    diffs = dmp.diff_main(original_html, accessible_html)
+    dmp.diff_cleanupSemantic(diffs)
+    return dmp.diff_prettyHtml(diffs)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -154,6 +168,22 @@ def manage_background(soup):
     return soup
 
 
+def increase_overall_font_size_bytwice_of_initial(soup):
+    # Find all text elements
+    text_elements = soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "a", "li", "td", "th", "caption", "label"])
+    for elem in text_elements:
+        # Increase the font size of the element
+        font_size = elem.get("font-size")
+        if font_size:
+            font_size = int(font_size[:-2])
+            elem["font-size"] = f"{font_size * 2}px"
+        else:
+            elem["font-size"] = "32px"
+            
+    return soup
+
+
+
 
 def scrapedata(url, session_id):
     # Get the HTML content
@@ -174,6 +204,7 @@ def scrapedata(url, session_id):
     soup = change_font_size_for_each_element(soup)
     soup = manage_contrast_between_text_and_background(soup)
     soup = manage_background(soup)
+    soup = increase_overall_font_size_bytwice_of_initial(soup)
     
     # Ensure the previews folder exists
     preview_dir = "previews"

@@ -9,19 +9,73 @@ const InputUrl = ({ onPreview }) => {
   const handleSubmit = async () => {
     setIsProcessing(true);
     try {
+      console.log("response.data.preview_url");
       const response = await axios.post("http://127.0.0.1:8000/scrapedata", {
         url,
       });
 
       // Pass only the preview URL
       onPreview(response.data.preview_url);
-      console.log(response.data.preview_url);
-    } catch (error) {
-      console.error("Error processing URL:", error);
-      alert("Failed to process the URL. Please try again.");
-    } finally {
-      setIsProcessing(false);
-    }
+      // let gg = response.data.preview_url;
+      // try {
+      //   // First request to get the preview URL
+      //   const previewResponse = await axios.post("http://127.0.0.1:8000/return_soup", {
+      //     url,
+      //   });
+      //   console.log(previewResponse.data,"\n1");
+      //   const a = previewResponse.data.soup;
+    
+      //   // Second request using the preview URL
+      //   console.log(gg);
+      //   const secondResponse = await axios.post("http://127.0.0.1:8000/return_soup", {
+      //     gg,
+      //   });
+      //   console.log(secondResponse.data);
+      //   const g = secondResponse.data.soup;
+      //   console.log(g);
+    
+      //   // Third request using the preview URL 'a'
+      //   const thirdResponse = await axios.post("http://127.0.0.1:8000/return_soup", {
+      //     a,
+      //   });
+      //   console.log(thirdResponse.data);
+      //   const h = thirdResponse.data;
+    
+      //   // Final request to get the difference report
+      //   const differenceResponse = await axios.post("http://127.0.0.1:8000/difference_report", {
+      //     g,
+      //     h
+      //   });
+      //   console.log(differenceResponse.data);
+    
+      } catch (error) {
+        // Handle any errors
+        console.error("An error occurred:", error);
+      } finally {
+        // This block will always run
+        console.log("Request sequence completed.");
+      }
+    
+    
+      
+      // new_soup = axios.post("http://127.0.0.1:8000/return_soup", {
+      //   a,
+      // })['soup'];
+
+      // resp = axios.post("http://127.0.0.1:8000/difference_report"),{
+      //   original_soup,
+      //   new_soup
+      // }
+
+      // console.log(resp.data);
+
+
+    // } catch (error) {
+    //   console.error("Error processing URL:", error);
+    //   alert("Failed to process the URL. Please try again.");
+    // } finally {
+    //   setIsProcessing(false);
+    // }
   };
 
   const handleReset  = () => {
