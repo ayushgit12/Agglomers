@@ -1,4 +1,3 @@
-// src/components/InputUrl.jsx
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -12,9 +11,10 @@ const InputUrl = ({ onPreview }) => {
       const response = await axios.post("http://127.0.0.1:8000/scrapedata", {
         url,
       });
-      const { session_id } = response.data; // Backend will return a unique session ID
-      alert("Website processed successfully!");
-      onPreview(session_id); // Pass the session ID to preview the improved website
+
+      // Pass only the preview URL
+      onPreview(response.data.preview_url);
+      console.log(response.data.preview_url);
     } catch (error) {
       console.error("Error processing URL:", error);
       alert("Failed to process the URL. Please try again.");
