@@ -36,7 +36,7 @@ const PreviewAndCustomize = ({ scrapedData }) => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="min-h-screen top-0 bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500 flex flex-col items-center" style={{ padding: "20px" }}>
       <h1>Customize Website</h1>
       <div style={{ marginBottom: "20px" }}>
         <div style={{ marginBottom: "10px" }}>
@@ -97,7 +97,7 @@ const PreviewAndCustomize = ({ scrapedData }) => {
           title="Website Preview"
           width="100%"
           height="600px"
-          style={{ border: "1px solid #ccc" }}
+          style={{ border: "1px solid black" }}
         />
       ) : (
         <p>No preview available.</p>
