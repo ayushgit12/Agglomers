@@ -149,8 +149,6 @@ def manage_contrast_between_text_and_background(soup):
 
 
 def manage_background(soup):
-    for tag in soup.find_all(['p', 'span', 'div']):
-        tag['style'] = f"font-size: 18px; color: black; background-color: white; filter: contrast(125%);"
     return soup
 
 
