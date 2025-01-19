@@ -6,6 +6,7 @@ import "./index.css"
 import Landing from "./components/Landing";
 import CodeDisplayComponent from "./components/CodeDisplayComponent"; // Make sure this is the correct path
 import "./index.css";
+import Renders from "./components/Renders";
 
 const App = () => {
   const [scrapedData, setScrapedData] = useState("");
@@ -21,6 +22,7 @@ const App = () => {
           
         </div>} />
         <Route path="/code/:sessionId" element={<CodeDisplayComponent />} />
+        <Route path="/renders" element={<Renders />} />
       </Routes>
       
     </div>

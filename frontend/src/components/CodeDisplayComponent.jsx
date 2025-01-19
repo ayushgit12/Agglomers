@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import DiffMatchPatch from "diff-match-patch";
+import { useNavigate } from "react-router-dom";
 
 const CodeDisplayComponent = () => {
   const { sessionId } = useParams(); // Get sessionId from route params
+  const navigate = useNavigate();
   const [originalCode, setOriginalCode] = useState("");
   const [updatedCode, setUpdatedCode] = useState("");
-  const [highlightedDiff, setHighlightedDiff] = useState("");
+  const [highlightedDiff, setHighlightedDiff] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHtmlCodes = async () => {
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/get_html_code",
-          {
-            session_id: sessionId,
-          }
-        );
+        const response = await axios.post("http://127.0.0.1:8000/get_html_code", {
+          session_id: sessionId,
+        });
         setUpdatedCode(response.data.updated_html);
+        localStorage.setItem("updatedCode", response.data.updated_html);
       } catch (error) {
         console.error("Error fetching updated HTML code:", error);
       } finally {
@@ -28,14 +27,11 @@ const CodeDisplayComponent = () => {
 
       const fetchOriginal = async () => {
         try {
-          const response = await axios.post(
-            "http://127.0.0.1:8000/return_soup",
-            {
-              url: localStorage.getItem("url"),
-            }
-          );
+          const response = await axios.post("http://127.0.0.1:8000/return_soup", {
+            url: localStorage.getItem("url"),
+          });
           setOriginalCode(response.data.soup);
-          console.log(response.data);
+          localStorage.setItem("originalCode", response.data.soup);
         } catch (error) {
           console.error("Error fetching original HTML code:", error);
         }
@@ -48,32 +44,43 @@ const CodeDisplayComponent = () => {
   }, [sessionId]);
 
   useEffect(() => {
-    if (originalCode && updatedCode) {
-      const diffMatchPatch = new DiffMatchPatch();
+    if (originalCode) {
+      // Highlight <img> and <label> tags
+      const imgRegex = /<img([^>]*?)\s*(?<!alt\s*=\s*"[^"]*")\s*\/?>/gi;
+      const labelRegex = /<label([^>]*?)\s*(?<!for\s*=\s*"[^"]*")\s*>/gi;
 
-      // Compute the differences
-      const diffs = diffMatchPatch.diff_main(originalCode, updatedCode);
+      let highlightedParts = [];
+      let lastIndex = 0;
 
-      // Optional: Cleanup the diffs for better readability
-      diffMatchPatch.diff_cleanupSemantic(diffs);
+      // Process each match and store text chunks
+      originalCode.replace(imgRegex, (match, _, offset) => {
+        highlightedParts.push(originalCode.slice(lastIndex, offset));
+        highlightedParts.push(
+          <span key={offset} style={{ color: "red", fontWeight: "bold" }}>
+            {match}
+          </span>
+        );
+        lastIndex = offset + match.length;
+      });
 
-      // Generate highlighted HTML
-      const diffHtml = diffs
-        .map(([type, text]) => {
-          if (type === DiffMatchPatch.DIFF_INSERT) {
-            return `<span style="background-color: #d4f4dd; color: green; padding: 0 5px; border-radius: 3px;">${text}</span>`; // Added text
-          } else if (type === DiffMatchPatch.DIFF_DELETE) {
-            return `<span style="background-color: #f0f0f0; color: red; text-decoration: line-through; padding: 0 5px; border-radius: 3px;">${text}</span>`; // Deleted text with gray background
-          }
-           else {
-            return text; // Unchanged text
-          }
-        })
-        .join("");
+      originalCode.replace(labelRegex, (match, _, offset) => {
+        highlightedParts.push(originalCode.slice(lastIndex, offset));
+        highlightedParts.push(
+          <span key={offset} style={{ color: "red", fontWeight: "bold" }}>
+            {match}
+          </span>
+        );
+        lastIndex = offset + match.length;
+      });
 
-      setHighlightedDiff(diffHtml);
+      // Add the remaining part of the text
+      if (lastIndex < originalCode.length) {
+        highlightedParts.push(originalCode.slice(lastIndex));
+      }
+
+      setHighlightedDiff(highlightedParts);
     }
-  }, [originalCode, updatedCode]);
+  }, [originalCode]);
 
   return (
     <div style={containerStyle}>
@@ -82,30 +89,31 @@ const CodeDisplayComponent = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div>
-          <div style={sectionStyle}>
+        <div style={codeComparisonContainer}>
+          <div style={codeBlockContainer}>
             <h2>Original HTML Code</h2>
-            <pre style={codeStyle}>
-              {originalCode || "No original code available"}
-            </pre>
+            <pre style={codeStyle}>{highlightedDiff}</pre>
           </div>
 
-          <div style={sectionStyle}>
+          <div style={codeBlockContainer}>
             <h2>Updated HTML Code</h2>
             <pre style={codeStyle}>
               {updatedCode || "No updated code available"}
             </pre>
           </div>
-
-          <div>
-            <h2>Highlighted Differences</h2>
-            <div
-              style={diffStyle}
-              dangerouslySetInnerHTML={{ __html: highlightedDiff }}
-            ></div>
-          </div>
         </div>
       )}
+
+      {/* <div>
+        <Render1 originalCode={originalCode} />
+        <Render2 updatedCode={updatedCode} />
+
+      </div> */}
+      <div className="mx-auto mt-8 w-full text-center">
+      <button onClick={()=>{
+        navigate("/renders")
+      }} className="bg-blue-400 px-2 py-1 rounded-xl text-white">Show Renders</button>
+      </div>
     </div>
   );
 };
@@ -117,9 +125,19 @@ const containerStyle = {
   color: "#333",
 };
 
-// Section style for each block (Original Code, Updated Code)
-const sectionStyle = {
-  marginBottom: "20px",
+// Style for the code comparison container (side by side)
+const codeComparisonContainer = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: "20px",
+  alignItems: "start",
+};
+
+// Style for individual code blocks
+const codeBlockContainer = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "10px",
 };
 
 // Style for the <pre> tag to format code
@@ -133,16 +151,6 @@ const codeStyle = {
   maxHeight: "500px",
   overflowY: "auto",
   fontFamily: "'Courier New', Courier, monospace",
-};
-
-// Style for the diff container
-const diffStyle = {
-  whiteSpace: "pre-wrap",
-  border: "1px solid #ddd",
-  padding: "15px",
-  backgroundColor: "#f9f9f9",
-  borderRadius: "5px",
-  overflowX: "auto",
 };
 
 export default CodeDisplayComponent;
