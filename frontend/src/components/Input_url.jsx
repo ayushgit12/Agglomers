@@ -103,9 +103,17 @@ const InputUrl = ({ onPreview }) => {
         "preview_url",
         response.data.preview_url.split("/").pop()
       );
-      // navigate("/customize", {
-      //   state: { previewUrl: response.data.preview_url },
-      // });
+
+      // Add smooth scrolling after successful submission
+      setTimeout(() => {
+        const previewElement = document.getElementById("preview-section");
+        if (previewElement) {
+          previewElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100); // Small delay to ensure the preview component has rendered
     } catch (error) {
       console.error("Error processing URL:", error);
       alert("Failed to process the URL. Please try again.");

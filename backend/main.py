@@ -69,7 +69,7 @@ def manage_img_alt_tags(soup):
     images = soup.find_all("img", alt=False)
     for img in images:
         img['alt'] = "No description provided"
-    print(soup)
+    # print(soup)
     return soup
 
 def manage_label_tags(soup):
@@ -78,7 +78,7 @@ def manage_label_tags(soup):
     for label in labels:
         # Find the nearest input element
         input_elem = label.find_next("input")
-        if input_elem and input_elem.get("id"):
+        if input_elem and input_elem.get("id") and input_elem.get("id")!=label['for']:
             # Set the 'for' attribute of the label to the ID of the input element
             label['for'] = input_elem.get("id")
     return soup
@@ -168,7 +168,7 @@ def manage_background(soup):
 
 def increase_overall_font_size_bytwice_of_initial(soup):
     # Find all text elements
-    text_elements = soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "a", "li", "td", "th", "caption", "label"])
+    text_elements = soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "a", "li", "td", "th", "caption"])
     for elem in text_elements:
         # Increase the font size of the element
         font_size = elem.get("font-size")
@@ -197,11 +197,11 @@ def scrapedata(url, session_id):
     
 
 
-    # soup = manage_img_alt_tags(soup)
+    soup = manage_img_alt_tags(soup)
     # soup = manage_label_tags(soup)
-    # soup = change_font_size_for_each_element(soup)
-    # soup = manage_contrast_between_text_and_background(soup)
-    # soup = manage_background(soup)
+    soup = change_font_size_for_each_element(soup)
+    soup = manage_contrast_between_text_and_background(soup)
+    soup = manage_background(soup)
     # soup = increase_overall_font_size_bytwice_of_initial(soup)
     
     # Ensure the previews folder exists
