@@ -1,3 +1,50 @@
+```
+# # from flask import Flask, jsonify, request
+# # from flask_cors import CORS
+# # from main import scrapedata
+
+# # app = Flask(__name__)
+# # CORS(app)  # Enable CORS for all routes
+
+# # @app.route("/")
+# # def read_root():
+# #     return jsonify({"Hello": "World"})
+
+# # @app.route("/scrapedata", methods=["POST"])  # Changed to POST
+# # def read_scrape_data():
+# #     data = request.get_json()  # Get JSON payload
+
+# #     url = data.get('url')  # Extract 'url' from the JSON
+# #     if not url:
+# #         return jsonify({"error": "URL is required in the JSON body"}), 400
+
+# #     return jsonify(scrapedata(url))
+
+# # if __name__ == "__main__":
+# #     app.run(host="0.0.0.0", port=8000, debug=True)
+
+# from bs4 import BeautifulSoup
+# import requests
+# import os
+
+# HEADERS = {
+#     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+#     "Accept-Language": "en-US,en;q=0.9",
+# }
+
+# def scrapedata(url, session_id):
+#     response = requests.get(url, headers=HEADERS)
+#     soup = BeautifulSoup(response.content, "html.parser")
+    
+#     # Save the scraped HTML
+#     preview_dir = "previews"
+#     os.makedirs(preview_dir, exist_ok=True)
+#     file_path = os.path.join(preview_dir, f"{session_id}.html")
+    
+#     with open(file_path, "w", encoding="utf-8") as file:
+#         file.write(soup.prettify())
+    
+#     return file_path
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import uuid
@@ -285,7 +332,7 @@ you give just a json object as the structure is provided
 
 # Example usage
 # Initialize Flask app
-
+app = Flask(__name__)
 
 # Dummy ML model predict function
 # Replace this with your actual ML model's prediction logic
@@ -294,6 +341,90 @@ def predict(image_array):
     return {"class": "dog", "confidence": 0.89}
 
 # Route to handle Base64 image prediction
+@app.route('/predict', methods=['POST'])
+def handle_predict():
+    try:
+        # Get the Base64-encoded image from the form data
+        base64_image,base64_image2 = request.form.get('image')
+        # print(base64_image)
+
+        # if not base64_image:
+        #     return jsonify({'error': 'No image provided'}), 400
+
+        # Decode the Base64 image string
+        if "," in base64_image:
+            base64_image = base64_image.split(",")[1]
+        if "," in base64_image2:
+            base64_image2 = base64_image2.split(",")[1]
+
+        # Step 2: Decode the base64 string
+        image_data = base64.b64decode(base64_image)
+
+        # Step 3: Convert to a BytesIO object
+        image_file = BytesIO(image_data)
+
+        # Step 4: Open with PIL
+        image = Image.open(image_file)
+
+        # local_image_path = "/kaggle/input/sample-img-new/WhatsApp Image 2025-01-19 at 01.18.25.jpeg"
+        result = analyzer.analyze_image(image, system_prompt)
+        pattern = r"(?<=```json\s).*?(?=\s```)"
+        match = re.search(pattern, result, re.DOTALL)
+        final_result = match.group(0) if match else None
+        # Pass the image array to your ML model for prediction
+        # prediction = predict(image_array)
+        data = json.loads(final_result)
+        scores = [aspect["score"] for aspect in data["analysis"].values()]
+
+        # Calculate the average score
+        average_score = sum(scores) / len(scores)
+
+        # Update the overall accessibility score in the JSON
+        data["accessibility_score"] = round(average_score, 2)
+
+        # Output the updated JSON
+        updated_json = json.dumps(data, indent=4)
+
+        #****
+
+        # Get the Base64-encoded image from the form data
+      
+
+        # Step 2: Decode the base64 string
+        image_data2 = base64.b64decode(base64_image2)
+
+        # Step 3: Convert to a BytesIO object
+        image_file2 = BytesIO(image_data2)
+
+        # Step 4: Open with PIL
+        image2 = Image.open(image_file2)
+
+        # local_image_path2 = "/kaggle/input/sample-img-new/WhatsApp Image 2025-01-19 at 01.18.25.jpeg"
+        result2 = analyzer.analyze_image(image2, system_prompt)
+        pattern2 = r"(?<=```json\s).*?(?=\s```)"
+        match2 = re.search(pattern2, result2, re.DOTALL)
+        final_result2 = match2.group(0) if match2 else None
+        # Pass the image array to your ML model for prediction
+        # prediction2 = predict(image_array2)
+        data2 = json.loads(final_result2)
+        scores2 = [aspect2["score"] for aspect2 in data2["analysis"].values()]
+
+        # Calculate the average score
+        average_score2 = sum(scores2) / len(scores2)
+
+        # Update the overall accessibility score in the JSON
+        data2["accessibility_score"] = round(average_score2, 2)
+
+        # Output the updated JSON
+        updated_json2 = json.dumps(data2, indent=4)
+        jsonData=dict()
+        jsonData['original']=updated_json
+        jsonData['modified']=updated_json2
+        # Return the prediction as JSON
+        jsonData = json.loads(json.dumps(jsonData))
+        return jsonData, 200
+    except Exception as e:
+        return jsonify({'error': f'Error processing image: {str(e)}'}), 500
 
 # Run the Flask app
 if __name__ == '__main__':
@@ -303,3 +434,4 @@ if __name__ == '__main__':
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
+```
