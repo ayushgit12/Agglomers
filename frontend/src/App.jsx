@@ -7,7 +7,8 @@ import Landing from "./components/Landing";
 import CodeDisplayComponent from "./components/CodeDisplayComponent"; // Make sure this is the correct path
 import "./index.css";
 import Renders from "./components/Renders";
-
+import { Chart } from "react-chartjs-2";
+import Ch from "./components/Chart";
 const App = () => {
   const [scrapedData, setScrapedData] = useState("");
 
@@ -15,6 +16,7 @@ const App = () => {
     <div>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/chart" element={<Ch />} />
         <Route
           path="/preview"
           element={
