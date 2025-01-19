@@ -15,7 +15,7 @@ const PieChart = ({ data }) => {
     datasets: [
       {
         label: "Accessibility Score",
-        data: [data.original.accessibilityScore, data.modified.accessibilityScore],
+        data: [data.original.accessibility_score, data.modified.accessibility_score], // Updated to match the JSON structure
         backgroundColor: ["rgba(255, 99, 132, 0.5)", "rgba(54, 162, 235, 0.5)"],
         borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
         borderWidth: 1,

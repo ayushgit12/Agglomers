@@ -9,7 +9,7 @@ const AccessibilityScore = ({ score }) => {
 
   return (
     <div >
-      <h3>Audit Score:</h3>
+      <h3>Accessibility Score:</h3>
       <div className="circular-progress-container">
         <CircularProgressbar
           value={score}

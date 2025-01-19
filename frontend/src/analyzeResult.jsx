@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
 async function analyzeImage(base64Image) {
     try {
-      const response = await fetch('http://127.0.0.1:5000/predict', {
+      const response = await fetch('http://127.0.0.1:8000/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
+        
         body: new URLSearchParams({
           image: base64Image, // Your Base64-encoded image
         }),
       });
-  
+      console.log("response ", response);
+      console.log("ok");
       if (response.ok) {
         const analysis = await response.json();
         return analysis;
@@ -86,12 +89,16 @@ function AnalysisResult({ data }) {
 export default function Analyze() {
   const [analysisData, setAnalysisData] = useState(null);
 
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
+    console.log("file", file);
     const reader = new FileReader();
 
     reader.onloadend = async () => {
       const base64Image = reader.result.split(',')[1];
+      console.log("base64Image", base64Image);
+      localStorage.setItem('image', base64Image);
       const data = await analyzeImage(base64Image);
       console.log("data", data);
       setAnalysisData(data);
