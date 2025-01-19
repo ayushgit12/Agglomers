@@ -165,5 +165,6 @@ def get_difference_report():
     report = difference_report(original_soup, new_soup)
     return jsonify(report)
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

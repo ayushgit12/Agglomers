@@ -26,10 +26,14 @@ const Render1 = ({ originalCode }) => {
         console.log(base64Image); // This is your base64 image string
         
         // Save the base64 image to a .txt file
-        saveBase64ToFile(base64Image);
+        localStorage.setItem("render1", base64Image);
       });
     }
   };
+
+
+
+
 
   return (
     <div>

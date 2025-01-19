@@ -24,9 +24,9 @@ const Render2 = ({ updatedCode }) => {
         // Get the base64 string of the image
         const base64Image = canvas.toDataURL('image/png');
         console.log(base64Image); // This is your base64 image string
-        
+        localStorage.setItem("render2", base64Image);
         // Save the base64 image to a .txt file
-        saveBase64ToFile(base64Image);
+        // saveBase64ToFile(base64Image);
       });
     }
   };
